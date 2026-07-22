@@ -3,10 +3,8 @@ import { Vehicle } from "../models/vehicle.model";
 
 class VehicleService {
 
-    public findAll(): Vehicle[] {
-
-        return vehicleRepository.findAll();
-
+    public async findAll(): Promise<Vehicle[]> {
+        return await vehicleRepository.findAll();
     }
 
 }

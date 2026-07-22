@@ -3,8 +3,8 @@ import vehicleService from "../services/vehicle.service";
 
 class VehicleController {
 
-    public findAll(req: Request, res: Response): void {
-        const vehicles = vehicleService.findAll();
+    public async findAll(req: Request, res: Response): Promise<void> {
+        const vehicles = await vehicleService.findAll();
         res.status(200).json(vehicles);
     }
 
