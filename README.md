@@ -1,56 +1,12 @@
-# 🚗 NinjaCar — Vehicle Registration Microservice
+# MS NinjaCar
 
-Microsserviço responsável pelo cadastro e gerenciamento de veículos do projeto NinjaCar.
+Microsserviço responsável pelo gerenciamento de veículos do projeto NinjaCar.
 
-Este projeto faz parte de uma arquitetura baseada em microsserviços, utilizando Node.js, TypeScript, Express e PostgreSQL. A comunicação entre os microsserviços será realizada posteriormente por meio de mensageria com RabbitMQ.
-
----
-
-## 📌 Sobre o projeto
-
-O `ms-ninjacar` é o microsserviço responsável pelas operações relacionadas ao cadastro e gerenciamento de veículos.
-
-A aplicação foi desenvolvida utilizando uma arquitetura em camadas, separando as responsabilidades entre rotas, controllers, services e repositories.
-
-Atualmente, o microsserviço possui um endpoint de consulta de veículos integrado a um banco de dados PostgreSQL executado em um container Docker.
+O serviço disponibiliza uma API REST para cadastro, consulta, atualização e exclusão de veículos, utilizando PostgreSQL como banco de dados.
 
 ---
 
-## 🏗️ Arquitetura
-
-O fluxo principal da aplicação segue a seguinte estrutura:
-
-```text
-Cliente (Postman / Frontend)
-            │
-            ▼
-         Routes
-            │
-            ▼
-        Controller
-            │
-            ▼
-          Service
-            │
-            ▼
-        Repository
-            │
-            ▼
-        PostgreSQL
-```
-
-### Responsabilidades das camadas
-
-* **Routes:** definição dos endpoints HTTP da aplicação.
-* **Controller:** gerenciamento das requisições e respostas HTTP.
-* **Service:** implementação das regras de negócio da aplicação.
-* **Repository:** comunicação e acesso aos dados persistidos no banco.
-* **Model:** definição da estrutura dos dados utilizados pela aplicação.
-* **Config:** configuração de recursos externos, como a conexão com o banco de dados.
-
----
-
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 * Node.js
 * TypeScript
@@ -59,321 +15,287 @@ Cliente (Postman / Frontend)
 * Docker
 * Docker Compose
 * DBeaver
-* `pg` — driver de conexão com PostgreSQL
-* `tsx` — execução do TypeScript em desenvolvimento com atualização automática
+* Postman
 
 ---
 
-## 📁 Estrutura do projeto
+## Funcionalidades
 
-```text
-ms-ninjacar/
-│
-├── src/
-│   ├── config/
-│   │   └── database.config.ts
-│   │
-│   ├── controllers/
-│   │   └── vehicle.controller.ts
-│   │
-│   ├── models/
-│   │   └── vehicle.model.ts
-│   │
-│   ├── repositories/
-│   │   └── vehicle.repository.ts
-│   │
-│   ├── routes/
-│   │   └── vehicle.routes.ts
-│   │
-│   ├── services/
-│   │   └── vehicle.service.ts
-│   │
-│   ├── app.ts
-│   └── server.ts
-│
-├── database/
-│   └── migrations/
-│       └── 001_create_vehicles.sql
-│
-├── .gitignore
-├── docker-compose.yml
-├── package.json
-├── package-lock.json
-├── tsconfig.json
-└── README.md
-```
+O microsserviço possui as seguintes operações:
+
+* Cadastro de veículos
+* Listagem de veículos
+* Consulta de veículo por ID
+* Atualização de veículos
+* Exclusão de veículos
+* Validação dos dados recebidos
+* Validação dos IDs informados
+* Tratamento de placas duplicadas
+* Tratamento centralizado de erros
 
 ---
 
-## 🚙 Modelo de veículo
-
-Atualmente, um veículo possui os seguintes atributos:
-
-| Campo             | Tipo     | Descrição                      |
-| ----------------- | -------- | ------------------------------ |
-| `id`              | `number` | Identificador único do veículo |
-| `brand`           | `string` | Marca do veículo               |
-| `model`           | `string` | Modelo do veículo              |
-| `manufactureYear` | `number` | Ano de fabricação              |
-| `plate`           | `string` | Placa do veículo               |
-| `color`           | `string` | Cor do veículo                 |
-
-No banco de dados, os nomes das colunas seguem a convenção `snake_case`, enquanto na aplicação TypeScript é utilizado `camelCase`.
-
-Exemplo:
+## Estrutura do projeto
 
 ```text
-PostgreSQL: manufacture_year
-TypeScript: manufactureYear
+src/
+├── controllers/
+├── errors/
+├── middlewares/
+├── models/
+├── repositories/
+├── routes/
+├── services/
+├── types/
+├── utils/
+└── app.ts
 ```
+
+### Controllers
+
+Responsáveis por receber as requisições HTTP e retornar as respostas da API.
+
+### Services
+
+Responsáveis pela lógica de negócio da aplicação.
+
+### Repositories
+
+Responsáveis pela comunicação com o banco de dados PostgreSQL.
+
+### Models
+
+Representam as entidades utilizadas pela aplicação.
+
+### Routes
+
+Definem os endpoints disponibilizados pelo microsserviço.
+
+### Middlewares
+
+Contêm funcionalidades executadas durante o processamento das requisições, incluindo o tratamento centralizado de erros.
+
+### Errors
+
+Contêm as classes utilizadas para representar erros controlados da aplicação.
+
+### Types
+
+Contêm as tipagens utilizadas pelo projeto.
+
+### Utils
+
+Contêm funções auxiliares e reutilizáveis, incluindo validações de IDs e dados de veículos.
 
 ---
 
-## 🐘 Banco de dados
+## Banco de dados
 
-O projeto utiliza PostgreSQL executado através do Docker.
+O projeto utiliza PostgreSQL como banco de dados.
 
-As configurações atuais são:
+O banco é executado através do Docker Compose.
 
-```text
-Database: ninjacar
-User: postgres
-Password: postgres
-Host: localhost
-Port: 5432
-```
-
-A infraestrutura do banco é definida no arquivo:
+A tabela principal utilizada pelo microsserviço é:
 
 ```text
-docker-compose.yml
+vehicles
 ```
 
-Para iniciar o PostgreSQL:
+Com os seguintes campos:
 
-```bash
-docker compose up -d
-```
+| Campo            | Tipo         | Descrição           |
+| ---------------- | ------------ | ------------------- |
+| id               | SERIAL       | Identificador único |
+| brand            | VARCHAR(100) | Marca do veículo    |
+| model            | VARCHAR(100) | Modelo do veículo   |
+| manufacture_year | INTEGER      | Ano de fabricação   |
+| plate            | VARCHAR(10)  | Placa do veículo    |
+| color            | VARCHAR(100) | Cor do veículo      |
 
-Para verificar os containers em execução:
-
-```bash
-docker ps
-```
-
-Para interromper os containers:
-
-```bash
-docker compose down
-```
-
-Os dados do PostgreSQL são persistidos através de um volume Docker.
+A placa é configurada como um valor único no banco de dados.
 
 ---
 
-## 🗃️ Banco de dados e migrations
+## Endpoints
 
-A criação da tabela de veículos está documentada no arquivo:
-
-```text
-database/migrations/001_create_vehicles.sql
-```
-
-A tabela `vehicles` possui atualmente os seguintes campos:
-
-```text
-id
-brand
-model
-manufacture_year
-plate
-color
-```
-
-A coluna `id` é utilizada como chave primária.
-
-A coluna `plate` possui uma restrição de unicidade para evitar o cadastro de veículos com placas duplicadas.
-
----
-
-## 🔌 Conexão com PostgreSQL
-
-A conexão com o banco é realizada através da biblioteca `pg`, utilizando um `Pool` de conexões.
-
-O arquivo responsável pela configuração é:
-
-```text
-src/config/database.config.ts
-```
-
-O fluxo de acesso aos dados ocorre através do Repository:
-
-```text
-VehicleController
-        │
-        ▼
-VehicleService
-        │
-        ▼
-VehicleRepository
-        │
-        ▼
-PostgreSQL Pool
-        │
-        ▼
-PostgreSQL
-```
-
----
-
-## 🌐 Endpoints
-
-### Consultar todos os veículos
+### Listar veículos
 
 ```http
 GET /vehicles
 ```
 
-Retorna todos os veículos cadastrados no banco de dados.
+Retorna todos os veículos cadastrados.
 
-Exemplo de resposta:
+---
+
+### Buscar veículo por ID
+
+```http
+GET /vehicles/:id
+```
+
+Retorna um veículo específico através do seu ID.
+
+---
+
+### Cadastrar veículo
+
+```http
+POST /vehicles
+```
+
+Exemplo de requisição:
 
 ```json
-[
-  {
-    "id": 1,
-    "brand": "Toyota",
-    "model": "Corolla",
-    "manufactureYear": 2024,
-    "plate": "ABC-1234",
-    "color": "Prata"
-  }
-]
+{
+  "brand": "Toyota",
+  "model": "Corolla",
+  "manufactureYear": 2024,
+  "plate": "ABC-1234",
+  "color": "Prata"
+}
+```
+
+Resposta esperada:
+
+```http
+201 Created
 ```
 
 ---
 
-## ▶️ Como executar o projeto
+### Atualizar veículo
 
-### Pré-requisitos
+```http
+PUT /vehicles/:id
+```
 
-Antes de executar o projeto, é necessário ter instalado:
+Exemplo:
 
-* Node.js
-* npm
-* Docker Desktop
+```json
+{
+  "brand": "Toyota",
+  "model": "Corolla XEi",
+  "manufactureYear": 2025,
+  "plate": "ABC-1234",
+  "color": "Preto"
+}
+```
 
-O DBeaver é recomendado para gerenciamento visual do banco de dados, mas não é obrigatório para executar a aplicação.
+Resposta esperada:
+
+```http
+200 OK
+```
 
 ---
 
-### 1. Clonar o projeto
+### Excluir veículo
 
-```bash
-git clone <URL_DO_REPOSITORIO>
+```http
+DELETE /vehicles/:id
 ```
 
-Acesse a pasta do projeto:
+Resposta esperada:
 
-```bash
-cd ms-ninjacar
+```http
+204 No Content
 ```
 
 ---
 
-### 2. Instalar as dependências
+## Validações
+
+A API realiza validações para:
+
+* IDs inválidos
+* IDs menores ou iguais a zero
+* Marca obrigatória
+* Modelo obrigatório
+* Ano de fabricação válido
+* Ano de fabricação inteiro
+* Ano de fabricação não superior ao ano atual
+* Placa obrigatória
+* Formato válido de placa
+* Cor obrigatória
+
+---
+
+## Tratamento de erros
+
+A API utiliza tratamento centralizado de erros.
+
+Principais códigos HTTP utilizados:
+
+| Código | Descrição                      |
+| ------ | ------------------------------ |
+| 200    | Operação realizada com sucesso |
+| 201    | Recurso criado com sucesso     |
+| 204    | Recurso excluído com sucesso   |
+| 400    | Dados ou parâmetros inválidos  |
+| 404    | Recurso não encontrado         |
+| 409    | Conflito, como placa duplicada |
+| 500    | Erro interno do servidor       |
+
+---
+
+## Execução do projeto
+
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
----
-
-### 3. Iniciar o PostgreSQL
-
-Certifique-se de que o Docker Desktop está em execução.
-
-Depois:
+Inicie o banco de dados:
 
 ```bash
 docker compose up -d
 ```
 
----
-
-### 4. Executar a aplicação
+Inicie a aplicação em modo de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-A aplicação será executada utilizando o modo de desenvolvimento com `tsx watch`.
+A API estará disponível na porta configurada no projeto.
 
 ---
 
-### 5. Testar a API
+## Testes
 
-Utilize o Postman ou outra ferramenta de requisições HTTP.
+Os endpoints foram testados utilizando Postman.
 
-Endpoint:
+Foram realizados testes de:
 
-```http
-GET http://localhost:3000/vehicles
+* Cadastro de veículos
+* Consulta de veículos
+* Consulta por ID
+* Atualização de veículos
+* Exclusão de veículos
+* IDs inválidos
+* IDs inexistentes
+* Dados inválidos
+* Anos inválidos
+* Placas inválidas
+* Placas duplicadas
+* Tratamento de erros HTTP
+
+Todos os cenários previstos foram validados com sucesso.
+
+---
+
+## Próximas etapas
+
+O projeto faz parte de uma arquitetura composta por múltiplos microsserviços.
+
+A próxima etapa consiste na implementação do:
+
+```text
+ms-query-ninjacar
 ```
 
----
+Responsável pelas operações de consulta de veículos e pela integração com o fluxo de mensageria do projeto.
 
-## 📌 Status do desenvolvimento
-
-### Microsserviço `ms-ninjacar`
-
-* [x] Configuração inicial do Node.js
-* [x] Configuração do TypeScript
-* [x] Configuração do Express
-* [x] Configuração do `tsx`
-* [x] Estrutura de pastas
-* [x] Arquitetura Routes → Controller → Service → Repository
-* [x] Model `Vehicle`
-* [x] Configuração do Docker Compose
-* [x] PostgreSQL em container Docker
-* [x] Conexão com PostgreSQL
-* [x] Criação da tabela `vehicles`
-* [x] Integração do Repository com PostgreSQL
-* [x] `GET /vehicles`
-* [ ] `POST /vehicles`
-* [ ] `GET /vehicles/:id`
-* [ ] `PUT /vehicles/:id`
-* [ ] `DELETE /vehicles/:id`
-
-### Arquitetura de microsserviços
-
-* [x] `ms-ninjacar` — Vehicle Registration Service
-* [ ] `ms-query-ninjacar` — Vehicle Query Service
-* [ ] Comunicação entre microsserviços
-* [ ] RabbitMQ
-* [ ] Publicação de eventos
-* [ ] Consumo de eventos
-* [ ] Sincronização de dados entre microsserviços
-
-### Documentação
-
-* [x] README inicial
-* [ ] Documentação completa dos endpoints
-* [ ] Documentação da arquitetura final
-* [ ] Documentação da mensageria
-* [ ] Instruções completas de execução
-* [ ] Evidências/testes para entrega
-
----
-
-## 🚧 Próximos passos
-
-O desenvolvimento seguirá a seguinte ordem:
-
-1. Finalizar o CRUD de veículos no `ms-ninjacar`.
-2. Implementar validações e tratamento de erros.
-3. Estruturar o `ms-query-ninjacar`.
-4. Implementar a comunicação assíncrona utilizando RabbitMQ.
-5. Integrar os microsserviços.
-6. Documentar a arquitetura e os endpoints.
-7. Preparar o projeto para a entrega final.
+Posteriormente, os microsserviços serão integrados através de um sistema de mensageria.
