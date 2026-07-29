@@ -1,7 +1,19 @@
 import app from "./app";
+import { connectRabbitMQ } from "./config/rabbitmq.config";
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`🚗 ms-ninjacar iniciado na porta ${PORT}`);
-});
+async function startServer() {
+    try {
+        await connectRabbitMQ();
+
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Erro ao iniciar aplicação:", error);
+    }
+}
+
+startServer();
