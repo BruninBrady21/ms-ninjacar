@@ -3,8 +3,11 @@ import vehicleRepository from "../repositories/vehicle.repository";
 import { Vehicle } from "../models/vehicle.model";
 import { AppError } from "../errors/app.error";
 import { VehicleUpdateDTO } from "../dtos/vehicle-update.dto";
+import { VehiclePublisher } from "../messaging/publishers/vehicle.publisher";
 
 class VehicleService {
+
+    private publisher = new VehiclePublisher();
 
     public async findAll(): Promise<Vehicle[]> {
         return await vehicleRepository.findAll();
@@ -25,10 +28,8 @@ class VehicleService {
     }
 
     public async create(vehicle: VehicleCreateDTO): Promise<Vehicle> {
-        const existingVehicle =
-            await vehicleRepository.findByPlate(
-                vehicle.plate
-            );
+
+        const existingVehicle = await vehicleRepository.findByPlate(vehicle.plate);
 
         if (existingVehicle) {
             throw new AppError(
@@ -37,7 +38,11 @@ class VehicleService {
             );
         }
 
-        return await vehicleRepository.create(vehicle);
+        const createdVehicle = await vehicleRepository.create(vehicle);
+
+        await this.publisher.publishVehicleCreated(createdVehicle);
+
+        return createdVehicle;
     }
 
     public async update(id: number, vehicle: VehicleUpdateDTO): Promise<Vehicle> {
