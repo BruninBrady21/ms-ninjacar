@@ -1,4 +1,4 @@
-import pool from "../config/database.config";
+import { pool } from "../config/database.config";
 import { VehicleCreateDTO } from "../dtos/vehicle-create.dto";
 import { VehicleUpdateDTO } from "../dtos/vehicle-update.dto";
 import { Vehicle } from "../models/vehicle.model";

@@ -4,6 +4,12 @@ export const RABBITMQ = {
 
     ROUTING_KEY: "vehicle.created",
 
-    QUEUE: "vehicle.created.queue"
+    QUEUE: "vehicle.created.queue",
+
+    EVENTS: {
+        CREATED: "VehicleCreated",
+        UPDATED: "VehicleUpdated",
+        DELETED: "VehicleDeleted"
+    }
 
 } as const;

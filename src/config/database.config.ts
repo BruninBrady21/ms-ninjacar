@@ -1,11 +1,10 @@
+import "dotenv/config";
 import { Pool } from "pg";
 
-const pool = new Pool({
-    host: "localhost",
-    port: 5432,
-    database: "ninjacar",
-    user: "postgres",
-    password: "postgres",
+export const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
 });
-
-export default pool;

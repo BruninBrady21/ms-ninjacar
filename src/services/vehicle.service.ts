@@ -66,10 +66,14 @@ class VehicleService {
             );
         }
 
-        return await vehicleRepository.update(
+        const updatedVehicle = await vehicleRepository.update(
             id,
             vehicle
         );
+
+        await this.publisher.publishVehicleUpdated(updatedVehicle);
+
+        return updatedVehicle;
 
     }
 
@@ -85,6 +89,8 @@ class VehicleService {
         }
 
         await vehicleRepository.delete(id);
+
+        await this.publisher.publishVehicleDeleted(id);
     }
 }
 
