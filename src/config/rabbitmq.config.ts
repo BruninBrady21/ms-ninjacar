@@ -5,7 +5,7 @@ let channel: Channel;
 
 export async function connectRabbitMQ(): Promise<void> {
     const connection: ChannelModel = await amqp.connect(
-        "amqp://localhost:5672"
+        process.env.RABBITMQ_URL ?? "amqp://localhost:5672"
     );
 
     channel = await connection.createChannel();

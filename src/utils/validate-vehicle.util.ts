@@ -1,50 +1,66 @@
 import { AppError } from "../errors/app.error";
 
-export function validateVehicle(
-    brand: unknown,
-    model: unknown,
-    manufactureYear: unknown,
-    plate: unknown,
-    color: unknown): void {
+export interface VehiclePayload {
+    brand: string;
+    model: string;
+    manufactureYear: number;
+    plate: string;
+    color: string;
+}
 
-    if (typeof brand !== "string" || brand.trim() === "") {
+export function validateVehiclePayload(payload: unknown): VehiclePayload {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
         throw new AppError(
-            "A marca do veículo é obrigatória.",
+            "O corpo da requisição deve ser um objeto com os dados do veículo.",
             400
         );
     }
 
-    if (typeof model !== "string" || model.trim() === "") {
-        throw new AppError(
-            "O modelo do veículo é obrigatório.",
-            400
-        );
-    }
+    const vehicle = payload as Record<string, unknown>;
+
+    const brand = normalizeRequiredString(vehicle.brand, "A marca do veículo é obrigatória.");
+    const model = normalizeRequiredString(vehicle.model, "O modelo do veículo é obrigatório.");
+    const color = normalizeRequiredString(vehicle.color, "A cor do veículo é obrigatória.");
 
     const currentYear = new Date().getFullYear();
 
-    if (typeof manufactureYear !== "number" || !Number.isInteger(manufactureYear) ||
-        manufactureYear < 1886 || manufactureYear > currentYear) {
+    if (typeof vehicle.manufactureYear !== "number" || !Number.isInteger(vehicle.manufactureYear) ||
+        vehicle.manufactureYear < 1886 || vehicle.manufactureYear > currentYear) {
         throw new AppError(
             `O ano de fabricação deve ser um número inteiro entre 1886 e ${currentYear}.`,
             400
         );
     }
 
-    const plateRegex = /^[A-Z]{3}-?[0-9][A-Z0-9][0-9]{2}$/i;
+    const plate = normalizePlate(vehicle.plate);
 
-    if (typeof plate !== "string" || plate.trim() === "" || !plateRegex.test(plate.trim())) {
-        throw new AppError(
-            "A placa do veículo possui um formato inválido.",
-            400
-        );
+    return {
+        brand,
+        model,
+        manufactureYear: vehicle.manufactureYear,
+        plate,
+        color
+    };
+}
+
+function normalizeRequiredString(value: unknown, message: string): string {
+    if (typeof value !== "string" || value.trim() === "") {
+        throw new AppError(message, 400);
     }
 
-    if (typeof color !== "string" || color.trim() === "") {
-        throw new AppError(
-            "A cor do veículo é obrigatória.",
-            400
-        );
+    return value.trim();
+}
+
+function normalizePlate(value: unknown): string {
+    if (typeof value !== "string") {
+        throw new AppError("A placa do veículo é obrigatória.", 400);
     }
 
+    const normalizedPlate = value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+    if (!/^[A-Z]{3}[0-9A-Z]{4}$/.test(normalizedPlate)) {
+        throw new AppError("A placa do veículo possui um formato inválido.", 400);
+    }
+
+    return normalizedPlate;
 }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { parseId } from "../utils/parse-id.util";
-import { validateVehicle } from "../utils/validate-vehicle.util";
+import { validateVehiclePayload } from "../utils/validate-vehicle.util";
 import vehicleService from "../services/vehicle.service";
 
 class VehicleController {
@@ -19,30 +19,17 @@ class VehicleController {
     }
 
     public async create(req: Request, res: Response): Promise<void> {
-        validateVehicle(
-            req.body.brand,
-            req.body.model,
-            req.body.manufactureYear,
-            req.body.plate,
-            req.body.color
-        );
-        const vehicle = await vehicleService.create(req.body);
+        const vehiclePayload = validateVehiclePayload(req.body);
+        const vehicle = await vehicleService.create(vehiclePayload);
         
         res.status(201).json(vehicle);
     }
 
     public async update(req: Request, res: Response): Promise<void> {
         const id = parseId(req.params.id);
-
-        validateVehicle(
-            req.body.brand,
-            req.body.model,
-            req.body.manufactureYear,
-            req.body.plate,
-            req.body.color
-        );
+        const vehiclePayload = validateVehiclePayload(req.body);
         
-        const vehicle = await vehicleService.update(id, req.body);
+        const vehicle = await vehicleService.update(id, vehiclePayload);
 
         res.status(200).json(vehicle);
     }

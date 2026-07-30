@@ -49,7 +49,7 @@ class VehicleRepository {
                 plate,
                 color
             FROM vehicles
-            WHERE plate = $1
+            WHERE UPPER(plate) = UPPER($1)
             `,
             [plate]
         );
