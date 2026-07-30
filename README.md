@@ -1,17 +1,17 @@
 # NinjaCar - Vehicle Registration Service
 
-Bem-vindo ao **Vehicle Registration Service** do projeto NinjaCar!
+Bem-vindo(a) ao **Vehicle Registration Service** do projeto NinjaCar!
 
-Este microsserviço foi desenvolvido para o Tech Challenge da Pós-Tech FIAP (Desenvolvimento Full Stack) e é responsável pelo gerenciamento dos veículos cadastrados no sistema.
+Este microsserviço foi desenvolvido para a entrega do Tech Challenge da Fase 5 da Pós-Tech FIAP, para o curso de Desenvolvimento FullStack e é responsável pelo gerenciamento dos veículos cadastrados no sistema.
 
-Além de realizar todas as operações de escrita (Create, Update e Delete), este serviço publica eventos no RabbitMQ para manter o microsserviço de consultas sincronizado.
+Além de realizar todas as operações de escrita (Create, Update e Delete), este serviço publica eventos no RabbitMQ para manter o microsserviço de consultas (ms-query-ninjacar) sincronizado.
 
 ---
 
 # Quick Start
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/BruninBrady21/ms-ninjacar.git
 cd ms-ninjacar
 npm install
 docker compose up -d
@@ -22,16 +22,16 @@ npm run dev
 
 # Índice
 
-- Tecnologias Utilizadas
-- Arquitetura
-- Estrutura do Projeto
-- Instalação e Execução
-- Endpoints
-- Fluxo da Mensageria
-- Requisitos Não Funcionais
-- Roadmap
-- Autor
-- Licença
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Arquitetura](#arquitetura)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Instalação e Execução](#instalação-e-execução)
+- [Endpoints](#endpoints)
+- [Fluxo da Mensageria](#fluxo-da-mensageria)
+- [Requisitos Não Funcionais](#requisitos-não-funcionais)
+- [Roadmap](#roadmap)
+- [Autor](#autor)
+- [Licença](#licença)
 
 ---
 
@@ -179,12 +179,13 @@ ms-query
 - Implementar testes automatizados
 - Adicionar documentação Swagger
 - Adicionar logs estruturados
+- Integração com frontend (projeto em React)
 
 ---
 
 # Autor
 
-Projeto desenvolvido para fins acadêmicos na Pós-Tech FIAP.
+Projeto desenvolvido para fins acadêmicos na Pós-Tech FIAP, feito na autoria de Bruno Freitas.
 
 ---
 
